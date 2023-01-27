@@ -60,6 +60,44 @@ async def get_post(id: int):
         # response_data = {"message": "post not found"}
 
         raise HTTPException(
-            status_code= status.HTTP_404_NOT_FOUND,
-            detail= "Post deos not exist"
+            status_code = status.HTTP_404_NOT_FOUND,
+            detail = "Post does not exist"
         )
+
+
+def find_index_post(id):
+    for idx, post_detail in enumerate(my_posts):
+        if post_detail['id'] == id:
+            return idx
+
+@app.delete("/delete/{id}")
+async def delete_post(id: int):
+    index = find_index_post(id)
+
+    if index is None:
+        raise HTTPException(
+            status_code = status.HTTP_404_NOT_FOUND,
+            detail = "Post does not exist"
+        )
+    
+    my_posts.pop(index)
+
+    return Response(status_code=status.HTTP_204_NO_CONTENT)
+
+@app.put("/put/{id}")
+async def update_pot(id: int, post: post):
+    index = find_index_post(id)
+    print(index)
+
+    if index is None:
+        raise HTTPException(
+            status_code = status.HTTP_404_NOT_FOUND,
+            detail = "Post does not exist"
+        )
+
+    updating_dict = post.dict()
+    updating_dict["id"] = id
+
+    my_posts[index] =  updating_dict
+
+    return {"data": updating_dict}
