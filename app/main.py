@@ -73,3 +73,81 @@ async def create_posts(post: post):
     conn.commit()
 
     return {"data": new_post}
+
+@app.get("/posts/{id}")
+async def get_post(id: int):
+    cursor.execute(
+        """
+            SELECT 
+                * 
+            FROM
+                posts
+            WHERE
+                id = %s;
+        """,
+        (str(id),)
+    )
+
+    post_detail = cursor.fetchone()
+
+    if not post_detail:
+        raise HTTPException(
+            status_code = status.HTTP_404_NOT_FOUND,
+            detail = "Post does not exist",
+        )
+
+    return {"post_detail": post_detail}
+
+@app.delete("/delete/{id}")
+async def delete_post(id: int):
+    cursor.execute(
+        """
+            DELETE FROM
+                posts
+            WHERE
+                id = %s
+            RETURNING
+                *
+        """,
+        (str(id),)
+    )
+
+    deleted_post = cursor.fetchone()
+
+    if not deleted_post:
+        raise HTTPException(
+            status_code = status.HTTP_404_NOT_FOUND,
+            detail = "Post does not exist"
+        )
+
+    return Response(status_code=status.HTTP_204_NO_CONTENT)
+
+@app.put("/put/{id}")
+async def update_post(id: int, post: post):
+    cursor.execute(
+        """
+            UPDATE 
+                posts
+            SET
+                title = %s,
+                content = %s,
+                published = %s
+            WHERE
+                id = %s
+            RETURNING
+                *
+        """,
+        (post.title, post.content, post.published, str(id))
+    )
+
+    updated_post = cursor.fetchone()
+
+    conn.commit()
+
+    if not updated_post:
+        raise HTTPException(
+            status_code = status.HTTP_404_NOT_FOUND,
+            detail = "Post does not exist"
+        )
+
+    return {"data": updated_post}
