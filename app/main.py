@@ -1,16 +1,14 @@
 from fastapi import FastAPI, Response, status, HTTPException
 
 from pydantic import BaseModel
-from typing import Optional
 
-import psycopg2, logging, time
+import psycopg2, time
 from psycopg2.extras import RealDictCursor
 
 
 
 app = FastAPI()
 
-logging = logging.getLogger("main")
 
 while True:
     try:
@@ -32,3 +30,46 @@ while True:
         print("Database connection error: {}".format(str(e)))
 
         time.sleep(10)
+
+
+class post(BaseModel):
+    title: str
+    content: str
+    published: bool = True
+
+
+@app.get("/")
+async def root():
+    return {"message": "FastAPI, Hello World"}
+
+@app.get("/posts")
+async def get_posts():
+    cursor.execute(
+        """
+            SELECT * FROM posts;
+        """
+    )
+
+    posts = cursor.fetchall()
+
+    return {"data": posts}
+
+@app.post("/posts", status_code = status.HTTP_201_CREATED)
+async def create_posts(post: post):
+    cursor.execute(
+        """
+            INSERT INTO 
+                posts (title, content, published)
+            VALUES
+                (%s, %s, %s)
+            RETURNING
+                *;
+        """,
+        (post.title, post.content, post.published)
+    )
+
+    new_post = cursor.fetchone()
+
+    conn.commit()
+
+    return {"data": new_post}
