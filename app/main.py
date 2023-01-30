@@ -98,7 +98,7 @@ async def get_post(id: int):
 
     return {"post_detail": post_detail}
 
-@app.delete("/delete/{id}")
+@app.delete("/posts/{id}")
 async def delete_post(id: int):
     cursor.execute(
         """
@@ -122,7 +122,7 @@ async def delete_post(id: int):
 
     return Response(status_code=status.HTTP_204_NO_CONTENT)
 
-@app.put("/put/{id}")
+@app.put("/posts/{id}")
 async def update_post(id: int, post: post):
     cursor.execute(
         """
