@@ -45,3 +45,15 @@ async def create_posts(post: Post, db: Session = Depends(get_db)):
     db.refresh(new_post)     
 
     return {"data": new_post}
+
+@app.get("/posts/{id}")
+async def get_post(id: int, db: Session = Depends(get_db)):
+    post = db.query(models.Post).filter(models.Post.id == id).first()
+
+    if not post:
+        raise HTTPException(
+            status_code = status.HTTP_404_NOT_FOUND,
+            detail = "Post does not exist",
+        )
+
+    return {"post_detail": post}
