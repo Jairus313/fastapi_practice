@@ -5,7 +5,7 @@ from sqlalchemy.sql.expression import text
 from .database import base
 
 
-class Posts(base):
+class Post(base):
     __tablename__ = "posts"
 
     id = Column(Integer, primary_key= True, nullable= False)
