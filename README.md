@@ -12,4 +12,6 @@ To get the APIs list, paste the below commands in the broswers
     http://127.0.0.1:8000/docs
 ```
 
-<iframe width="560" height="315" src="https://www.youtube.com/embed/0sOvCWFmrtA" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+<div align="center">
+  <a href="https://youtu.be/0sOvCWFmrtA"><img src="https://img.youtube.com/vi/0sOvCWFmrtA/0.jpg" alt="IMAGE ALT TEXT"></a>
+</div>
