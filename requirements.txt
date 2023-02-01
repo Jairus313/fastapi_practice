@@ -6,7 +6,7 @@ Brlapi==0.8.3
 catkin==0.8.10
 catkin-pkg==0.4.24
 ccsm==0.9.14.1
-certifi==2020.6.20
+certifi==2022.12.7
 chardet==4.0.0
 click==8.0.3
 colorama==0.4.4
