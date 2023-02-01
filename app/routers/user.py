@@ -1,10 +1,9 @@
-from fastapi import FastAPI, Response, status, HTTPException, Depends, APIRouter
+from fastapi import status, HTTPException, Depends, APIRouter
 from sqlalchemy.orm import Session
-from typing import List
 
 from .. import schemas, models
 from ..database import get_db
-
+from ..utils import hashing_password
 
 
 router = APIRouter(
@@ -15,7 +14,7 @@ router = APIRouter(
 
 @router.post("/", status_code = status.HTTP_201_CREATED, response_model= schemas.UserResponse)
 async def create_user(user: schemas.UserCreate, db: Session = Depends(get_db)):
-    hashed_password = hash(user.password)
+    hashed_password = hashing_password(user.password)
     user.password = hashed_password
 
     new_user = models.User(
