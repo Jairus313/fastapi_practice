@@ -38,9 +38,12 @@ class UserLogin(BaseModel):
     email: EmailStr
     password: str    
 
-class Token(BaseModel):
+class TokenResponse(BaseModel):
     access_token = str
     token_type = str
+
+    class Config:
+        orm_mode = True
 
 class TokenData(BaseModel):
     id: Optional[str] = None
