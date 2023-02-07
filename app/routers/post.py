@@ -14,8 +14,11 @@ router = APIRouter(
 
 
 @router.get("/", response_model = List[schemas.PostResponse])
-def get_posts(db: Session = Depends(get_db)):
-    posts = db.query(models.Post).all()
+def get_posts(db: Session = Depends(get_db), current_user: int = Depends(oauth2.get_current_user)):
+    posts = db.query(models.Post).filter(
+                models.Post.owner_id == current_user.id).all()
+    
+    print(current_user.id)
 
     if not posts:
         raise HTTPException(
@@ -48,6 +51,12 @@ async def get_post(id: int, db: Session = Depends(get_db), current_user: int = D
         raise HTTPException(
             status_code = status.HTTP_404_NOT_FOUND,
             detail = "Post does not exist",
+        )
+
+    if post.owner_id != current_user.id:
+        raise HTTPException(
+            status_code = status.HTTP_403_FORBIDDEN,
+            detail = "Not Authorized"
         )
 
     return post
