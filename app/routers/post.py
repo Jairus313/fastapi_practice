@@ -1,6 +1,6 @@
 from fastapi import Response, status, HTTPException, Depends, APIRouter
 from sqlalchemy.orm import Session
-from typing import List
+from typing import List, Optional
 
 from .. import schemas, models, oauth2
 from ..database import get_db
@@ -14,12 +14,12 @@ router = APIRouter(
 
 
 @router.get("/", response_model = List[schemas.PostResponse])
-def get_posts(db: Session = Depends(get_db), current_user: int = Depends(oauth2.get_current_user)):
+def get_posts(db: Session = Depends(get_db), current_user: int = Depends(oauth2.get_current_user),
+    limit: int = 10, offset: int = 0, search: Optional[str] = ""):
     posts = db.query(models.Post).filter(
-                models.Post.owner_id == current_user.id).all()
+                models.Post.owner_id == current_user.id,
+                models.Post.title.contains(search)).limit(limit).offset(offset).all()
     
-    print(current_user.id)
-
     if not posts:
         raise HTTPException(
             status_code= status.HTTP_204_NO_CONTENT,
