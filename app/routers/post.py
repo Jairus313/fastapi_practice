@@ -29,6 +29,7 @@ def get_posts(db: Session = Depends(get_db)):
 async def create_posts(post: schemas.PostCreate, db: Session = Depends(get_db), 
     current_user: int = Depends(oauth2.get_current_user)):
     new_post = models.Post(
+                        owner_id = current_user.id,
                         **post.dict()
                         )
 
@@ -61,6 +62,12 @@ async def delete_post(id: int, db: Session = Depends(get_db), current_user: int 
             detail = "Post does not exist"
         )
 
+    if post.first().owner_id != current_user.id:
+        raise HTTPException(
+            status_code = status.HTTP_403_FORBIDDEN,
+            detail = "Not Authorized"
+        )
+
     post.delete(synchronize_session = False)
     db.commit()
 
@@ -74,6 +81,12 @@ async def update_post(id: int, post: schemas.PostBase, db: Session = Depends(get
         raise HTTPException(
             status_code = status.HTTP_404_NOT_FOUND,
             detail = "Post does not exist"
+        )
+
+    if post_query.first().owner_id != current_user.id:
+        raise HTTPException(
+            status_code = status.HTTP_403_FORBIDDEN,
+            detail = "Not Authorized"
         )
 
     post_query.update(post.dict(), synchronize_session= False)
