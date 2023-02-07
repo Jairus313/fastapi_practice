@@ -4,7 +4,7 @@
 
 </br>
 
-## **After structuring the folder I've started using Swagger UI for APIs:**
+## **Or you can use Swagger UI for APIs:**
 
 To get the APIs list, paste the below commands in the broswers
 
